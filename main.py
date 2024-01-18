@@ -18,6 +18,7 @@ def server(tunnel_host, tunnel_port):
     app = socketio.WSGIApp(sio, static_files={
         '/': os.path.join(os.path.dirname(__file__), 'index.html'),
         '/index.js': os.path.join(os.path.dirname(__file__), 'index.js'),
+        '/fuel-price.js': os.path.join(os.path.dirname(__file__), 'fuel-price.js'),
         '/main.css': os.path.join(os.path.dirname(__file__), 'main.css'),
     })
 
