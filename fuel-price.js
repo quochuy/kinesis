@@ -12,7 +12,7 @@ fetch('https://fuelprice.io/brands/7-eleven/?fuel_type=ulp98', { cache: "force-c
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const fuelTypeAgo = doc.querySelectorAll('.fuel-type-ago');
-    const fuelLocation = [];
+    const fuelLocation = {};
 
     for(let fi=0; fi<fuelTypeAgo.length; fi+=1) {
       const fuel = fuelTypeAgo[fi];
@@ -24,15 +24,25 @@ fetch('https://fuelprice.io/brands/7-eleven/?fuel_type=ulp98', { cache: "force-c
         const anchor = container.querySelector('a');
         const location = anchor.textContent;
         const priceAgo = container.textContent.replace(location, '');
+        const state = fuel.closest('ul').previousElementSibling.id.replace('state-', '').replace(/\-/g, ' ');
+        if (!(state in fuelLocation)) {
+          fuelLocation[state] = [];
+        }
         const [price, timeAgo] = priceAgo.split(' ');
-        fuelLocation.push({location, price, timeAgo});
+        fuelLocation[state].push({state, location, price, timeAgo});
       }
     }
 
-    fuelLocation.sort(compare);
-    document.getElementById('fuel-price').value = fuelLocation.splice(0,10).map((fuel) => {
-      return `$${fuel.price} in ${fuel.location.replace('7-Eleven ', '')} ${fuel.timeAgo}`;
-    }).join('\n');
+    let list = '';
+    for (state in fuelLocation) {
+      fuelLocation[state].sort(compare);
+      list += `${state}\n`;
+      list += fuelLocation[state].splice(0, 7).map((fuel) => {
+        return `$${fuel.price} in ${fuel.location.replace('7-Eleven ', '')} ${fuel.timeAgo}`;
+      }).join('\n');
+      list += `\n\n`;
+    }
+    document.getElementById('fuel-price').value = list;
   })
   .catch(function (err) {
     // There was an error
