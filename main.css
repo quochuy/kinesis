@@ -18,9 +18,18 @@ html, body {
 
 .fuel-card {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: scroll;
     top: 20px;
     right: 20px;
     width: 500px;
-    height: 260px;
+    max-height: 360px;
     z-index: 1000;
+}
+
+.fuel-card .fuel-state {
+    font-weight: bold;
+    text-transform: capitalize;
 }
